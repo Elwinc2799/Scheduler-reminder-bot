@@ -10,7 +10,6 @@ import sqlite3
 def main():
     # Connect into Database
     db_connection = connect_database()
-    show_table(db_connection)
 
 
 def connect_database():
