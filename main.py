@@ -64,7 +64,7 @@ async def reminder():
             elif y==3:
                 tz_KL = pytz.timezone('Asia/Kuala_Lumpur')
                 temp = datetime.datetime.now(tz_KL) + timedelta(hours=0, minutes=10)
-                temp.strftime("%H:%M:%S")
+                temp = temp.strftime("%H:%M:%S")
                 if x > temp:
                     temp_time = x
                 else:
