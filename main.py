@@ -22,7 +22,7 @@ def create_connection(db_file):
 
 def select_all_tasks(conn):
     cur = conn.cursor()
-    day = str(datetime.datetime.now().weekday().__add__(1))
+    day = str(datetime.datetime.now().weekday())
     cur.execute("SELECT * FROM reminder WHERE weekday=" + day)
 
     rows = cur.fetchall()
@@ -66,30 +66,36 @@ async def reminder():
         y=0
         for x in row:
             if y==1:
-                v_time = x
-            elif y==2:
-                v_message = x
-            elif y==4:
-                v_channel = x
+                temp_course_name = x
+            elif y==3:
+                tz_KL = pytz.timezone('Asia/Kuala_Lumpur')
+                temp = datetime.datetime.now(tz_KL).strftime("%H:%M:%S")
+                if x > temp:
+                    temp_time = x
+                else:
+                    temp_time = 0
             y=y+1
 
         while True:
-            await client.wait_until_ready()
-            tz_KL = pytz.timezone('Asia/Kuala_Lumpur')
-            c_time = datetime.datetime.now(tz_KL).strftime("%H:%M:%S")
-            date_time_obj = datetime.datetime.strptime(v_time, '%H:%M:%S')
-            date_time_obj = date_time_obj - datetime.timedelta(minutes=10)
-            r_time = date_time_obj.strftime("%H:%M:%S")
-            print(c_time)
-            print(r_time)
-            channel = discord.utils.get(client.guilds[0].channels, name=v_channel)
-            user = "everyone"
-            if r_time < c_time:
-                message = v_message + f" @{user}."
-                print(message)
-                # await channel.send(message)
+            if temp_time != 0:
+                await client.wait_until_ready()
+                tz_KL = pytz.timezone('Asia/Kuala_Lumpur')
+                c_time = datetime.datetime.now(tz_KL).strftime("%H:%M:%S")
+                date_time_obj = datetime.datetime.strptime(temp_time, '%H:%M:%S')
+                date_time_obj = date_time_obj - datetime.timedelta(minutes=10)
+                r_time = date_time_obj.strftime("%H:%M:%S")
+                print(c_time)
+                print(r_time)
+                channel = discord.utils.get(client.guilds[0].channels, name="time-schedule-channel")
+                user = "everyone"
+                if r_time < c_time:
+                    message = " @everyone Reminder! " + temp_course_name + " is going to start in 10mins!"
+                    print(message)
+                    await channel.send(message)
+                    break
+                await asyncio.sleep(1800)
+            else:
                 break
-            await asyncio.sleep(5)
 
 client.loop.create_task(reminder())
 
