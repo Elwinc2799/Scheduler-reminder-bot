@@ -5,6 +5,7 @@ import datetime
 import asyncio
 import pytz
 import sqlite3
+from keep_alive import keep_alive
 
 """
 # Set Command Prefix Here
@@ -30,14 +31,6 @@ def select_all_tasks(conn):
 
 def insert_reminder(db_connection):
     pass
-
-def main():
-    # Connect into Database
-    db_connection = create_connection('reminder.db')
-    #timetable = select_all_tasks(db_connection)
-
-if __name__ == '__main__':
-    main()
 
 client = discord.Client()
 botToken = 'ODIzOTE1MTQzMDQ1MzE2NjI4.YFnwxQ.840BVstv5OyabfXNjiz-ybxDw5o'
@@ -93,10 +86,11 @@ async def reminder():
                     print(message)
                     await channel.send(message)
                     break
-                await asyncio.sleep(1800)
+                await asyncio.sleep(5)
             else:
                 break
 
 client.loop.create_task(reminder())
 
+keep_alive()
 client.run(botToken)
