@@ -1,6 +1,5 @@
 import discord
 from discord.ext import commands
-import os
 import datetime
 from datetime import timedelta
 import asyncio
@@ -12,6 +11,9 @@ from keep_alive import keep_alive
 # Set Command Prefix Here
 client = commands.Bot(command_prefix="$")
 """
+
+client = discord.Client()
+botToken = 'ODIzOTE1MTQzMDQ1MzE2NjI4.YFnwxQ.840BVstv5OyabfXNjiz-ybxDw5o'
 
 def create_connection(db_file):
     conn = None
@@ -32,9 +34,6 @@ def select_all_tasks(conn):
 
 def insert_reminder(db_connection):
     pass
-
-client = discord.Client()
-botToken = 'ODIzOTE1MTQzMDQ1MzE2NjI4.YFnwxQ.840BVstv5OyabfXNjiz-ybxDw5o'
 
 @client.event
 async def on_ready():
@@ -69,6 +68,8 @@ async def reminder():
                     temp_time = x
                 else:
                     temp_time = 0
+            elif y==4:
+                temp_target = x
             y=y+1
 
         while True:
@@ -82,9 +83,8 @@ async def reminder():
                 print(c_time)
                 print(r_time)
                 channel = discord.utils.get(client.guilds[0].channels, name="time-schedule-channel")
-                user = "everyone"
                 if r_time < c_time:
-                    message = " @everyone Reminder! " + temp_course_name + " is going to start in 10mins!"
+                    message = temp_target + "\nReminder! " + temp_course_name + " is going to start in 10mins!"
                     print(message)
                     await channel.send(message)
                     break
