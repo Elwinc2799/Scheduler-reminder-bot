@@ -62,7 +62,8 @@ async def reminder():
                 temp_course_name = x
             elif y==3:
                 tz_KL = pytz.timezone('Asia/Kuala_Lumpur')
-                temp = datetime.datetime.now(tz_KL).strftime("%H:%M:%S")
+                temp = datetime.datetime.now(tz_KL) + timedelta(hours=0, minutes=10)
+                temp.strftime("%H:%M:%S")
                 if x > temp:
                     temp_time = x
                 else:
@@ -92,5 +93,5 @@ async def reminder():
 
 client.loop.create_task(reminder())
 
-keep_alive()
+#keep_alive()
 client.run(botToken)
