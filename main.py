@@ -102,5 +102,5 @@ async def reminder():
 
 client.loop.create_task(reminder())
 
-#keep_alive()
+keep_alive()
 client.run(botToken)
