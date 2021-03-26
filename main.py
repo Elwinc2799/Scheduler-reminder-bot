@@ -59,9 +59,10 @@ async def on_message(message):
                     temp_n = x
                 elif y == 3:
                     tz_KL = pytz.timezone('Asia/Kuala_Lumpur')
-                    temp = datetime.datetime.now(tz_KL) + timedelta(hours=0, minutes=10)
-                    temp = temp.strftime("%H:%M:%S")
-                    if x > temp:
+                    temp = datetime.datetime.now(tz_KL).strftime("%H:%M:%S")
+                    tempX = datetime.datetime.strptime(x, '%H:%M:%S') - timedelta(hours=0, minutes=10)
+                    tempX = tempX.strftime("%H:%M:%S")
+                    if tempX > temp:
                         temp_t = x
                     else:
                         temp_t = 0
@@ -80,7 +81,9 @@ async def on_message(message):
 async def reminder():
     while True:
         await client.wait_until_ready()
-        tempDay = datetime.datetime.now().weekday()
+        tz_KL = pytz.timezone('Asia/Kuala_Lumpur')
+        tempDay = datetime.datetime.now(tz_KL).weekday()
+        print(tempDay)
         if 0 <= tempDay < 5:
             print("Monday to Friday")
             db_connection = create_connection('reminder.db')
@@ -92,9 +95,10 @@ async def reminder():
                         temp_course_name = x
                     elif y == 3:
                         tz_KL = pytz.timezone('Asia/Kuala_Lumpur')
-                        temp = datetime.datetime.now(tz_KL) + timedelta(hours=0, minutes=10)
-                        temp = temp.strftime("%H:%M:%S")
-                        if x > temp:
+                        temp = datetime.datetime.now(tz_KL).strftime("%H:%M:%S")
+                        tempX = datetime.datetime.strptime(x, '%H:%M:%S') - timedelta(hours=0, minutes=10)
+                        tempX = tempX.strftime("%H:%M:%S")
+                        if tempX > temp:
                             temp_time = x
                         else:
                             temp_time = 0
@@ -120,10 +124,10 @@ async def reminder():
                             await asyncio.sleep(5)
                     else:
                         break
-            await asyncio.sleep(5)
+            await asyncio.sleep(3600)
         else:
           print("Saturday and Sunday")
-          await asyncio.sleep(5)
+          await asyncio.sleep(3600)
 
 client.loop.create_task(reminder())
 
