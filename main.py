@@ -45,11 +45,30 @@ async def on_message(message):
         return
     if message.content.startswith('$hello'):
         await message.channel.send('Hello!')
-
-@client.event
-async def set_course_reminder(message):
-    if message.content.startswith('$set'):
-        await message.channel.send('Set')
+    elif message.content.startswith('$next'):
+        db_connection = create_connection('reminder.db')
+        timetable = select_all_tasks(db_connection)
+        for row in timetable:
+            y = 0
+            for x in row:
+                if y == 1:
+                    temp_n = x
+                elif y == 3:
+                    tz_KL = pytz.timezone('Asia/Kuala_Lumpur')
+                    temp = datetime.datetime.now(tz_KL) + timedelta(hours=0, minutes=10)
+                    temp = temp.strftime("%H:%M:%S")
+                    if x > temp:
+                        temp_t = x
+                    else:
+                        temp_t = 0
+                elif y == 4:
+                    temp_tg = x
+                y = y + 1
+            if temp_t != 0:
+                await message.channel.send("Next course: " + temp_n + "\nStart: " + temp_t + "\nAttendees: " + temp_tg)
+                break
+            else:
+                await message.channel.send("There are no more classes for today. Yay~")
 
 @client.event
 async def reminder():
