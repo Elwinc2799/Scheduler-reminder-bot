@@ -48,8 +48,12 @@ async def on_message(message):
     elif message.content.startswith('$next'):
         db_connection = create_connection('reminder.db')
         timetable = select_all_tasks(db_connection)
+        num = 0
         for row in timetable:
             y = 0
+            temp_n = ""
+            temp_t = 0
+            temp_tg = ""
             for x in row:
                 if y == 1:
                     temp_n = x
@@ -68,7 +72,9 @@ async def on_message(message):
                 await message.channel.send("Next course: " + temp_n + "\nStart: " + temp_t + "\nAttendees: " + temp_tg)
                 break
             else:
-                await message.channel.send("There are no more classes for today. Yay~")
+              num = num + 1
+        if num == len(timetable):
+          await message.channel.send("There are no more classes for today. Yay~")
 
 @client.event
 async def reminder():
