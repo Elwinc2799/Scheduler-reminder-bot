@@ -26,7 +26,8 @@ def create_connection(db_file):
 
 def select_all_tasks(conn):
     cur = conn.cursor()
-    day = str(datetime.datetime.now().weekday())
+    tz_KL = pytz.timezone('Asia/Kuala_Lumpur')
+    day = str(datetime.datetime.now(tz_KL).weekday())
     cur.execute("SELECT * FROM reminder WHERE weekday=" + day)
 
     rows = cur.fetchall()
