@@ -24,10 +24,10 @@ def create_connection(db_file):
         print(e)
     return conn
 
-def select_all_tasks(conn):
+def select_all_tasks(conn,counter):
     cur = conn.cursor()
     tz_KL = pytz.timezone('Asia/Kuala_Lumpur')
-    day = str(datetime.datetime.now(tz_KL).weekday())
+    day = str(datetime.datetime.now(tz_KL).weekday() + counter)
     cur.execute("SELECT * FROM reminder WHERE weekday=" + day)
 
     rows = cur.fetchall()
@@ -48,7 +48,7 @@ async def on_message(message):
         await message.channel.send('Hello!')
     elif message.content.startswith('$next'):
         db_connection = create_connection('reminder.db')
-        timetable = select_all_tasks(db_connection)
+        timetable = select_all_tasks(db_connection,0)
         num = 0
         for row in timetable:
             y = 0
@@ -77,6 +77,31 @@ async def on_message(message):
               num = num + 1
         if num == len(timetable):
           await message.channel.send("There are no more classes for today. Yay~")
+    elif message.content.startswith('$tmr'):
+        db_connection = create_connection('reminder.db')
+        timetable = select_all_tasks(db_connection,1)
+        num = 0
+        for row in timetable:
+            y = 0
+            temp_n = ""
+            temp_t = 0
+            temp_tg = ""
+            for x in row:
+                if y == 1:
+                    temp_n = x
+                elif y == 3:
+                    temp_t = x
+                elif y == 4:
+                    temp_tg = x
+                y = y + 1
+            if temp_t != 0:
+                await message.channel.send("Next course: " + temp_n + "\nStart: " + temp_t + "\nAttendees: " + temp_tg)
+                break
+            else:
+              num = num + 1
+        if num == len(timetable):
+          await message.channel.send("There are no more classes for tomorrow. Yay~")
+        
 
 @client.event
 async def reminder():
@@ -88,7 +113,7 @@ async def reminder():
         if 0 <= tempDay < 5:
             print("Monday to Friday")
             db_connection = create_connection('reminder.db')
-            timetable = select_all_tasks(db_connection)
+            timetable = select_all_tasks(db_connection,0)
             for row in timetable:
                 y = 0
                 for x in row:
