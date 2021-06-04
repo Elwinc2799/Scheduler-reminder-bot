@@ -6,6 +6,7 @@ import asyncio
 import pytz
 import sqlite3
 from keep_alive import keep_alive
+import quote
 
 """
 # Set Command Prefix Here
@@ -38,6 +39,7 @@ def insert_reminder(db_connection):
 
 @client.event
 async def on_ready():
+    print(quote.chooseQuote())
     print('Bot is Online')
 
 @client.event
@@ -46,6 +48,8 @@ async def on_message(message):
         return
     if message.content.startswith('$hello'):
         await message.channel.send('Hello!')
+    elif message.content.startswith('$quote'):
+        await message.channel.send(quote.chooseQuote())
     elif message.content.startswith('$next'):
         db_connection = create_connection('reminder.db')
         timetable = select_all_tasks(db_connection,0)
