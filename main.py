@@ -16,6 +16,7 @@ client = commands.Bot(command_prefix="$")
 client = discord.Client()
 botToken = 'ODIzOTE1MTQzMDQ1MzE2NjI4.YFnwxQ.840BVstv5OyabfXNjiz-ybxDw5o'
 
+
 def create_connection(db_file):
     conn = None
     try:
@@ -25,7 +26,8 @@ def create_connection(db_file):
         print(e)
     return conn
 
-def select_all_tasks(conn,counter):
+
+def select_all_tasks(conn, counter):
     cur = conn.cursor()
     tz_KL = pytz.timezone('Asia/Kuala_Lumpur')
     day = str(datetime.datetime.now(tz_KL).weekday() + counter)
@@ -34,33 +36,49 @@ def select_all_tasks(conn,counter):
     rows = cur.fetchall()
     return rows
 
+
 def insert_reminder(db_connection):
     pass
+
 
 @client.event
 async def on_ready():
     print('Bot is Online')
 
+
 @client.event
 async def on_message(message):
     if message.author == client.user:
         return
+
     if message.content.startswith('$hello'):
         await message.channel.send('Hello!')
+
     elif message.content.startswith('$quote'):
         await message.channel.send(extra.chooseQuote())
+
     elif message.content.startswith('$dice'):
-        await message.channel.send('Player 1: ')
-        player1 = await client.wait_for("message", check=check)
-        await message.channel.send('Player 2: ')
-        player2 = await client.wait_for("message", check=check)
-        await message.channel.send(extra.playDice(player1, player2))
+        channel = message.channel
+        def check(m):
+            return m.author == message.author
+
+        try:
+            await message.channel.send('Player 1: ')
+            player1 = await client.wait_for('message', timeout=30, check=check)
+            if player1 != '':
+                await channel.send('Player 2: ')
+                player2 = await client.wait_for('message', timeout=30, check=check)
+                if player2 != '':
+                    await channel.send(extra.playDice(player1.content, player2.content))
+        except asyncio.TimeoutError:
+            await channel.send('Timeout to input name')
 
     elif message.content.startswith('$mudae'):
         await message.channel.send('Mudae is noob! Dont use Mudae!')
+
     elif message.content.startswith('$next'):
         db_connection = create_connection('reminder.db')
-        timetable = select_all_tasks(db_connection,0)
+        timetable = select_all_tasks(db_connection, 0)
         num = 0
         for row in timetable:
             y = 0
@@ -86,12 +104,13 @@ async def on_message(message):
                 await message.channel.send("Next course: " + temp_n + "\nStart: " + temp_t + "\nAttendees: " + temp_tg)
                 break
             else:
-              num = num + 1
+                num = num + 1
         if num == len(timetable):
-          await message.channel.send("There are no more classes for today. Yay~")
+            await message.channel.send("There are no more classes for today. Yay~")
+
     elif message.content.startswith('$tmr'):
         db_connection = create_connection('reminder.db')
-        timetable = select_all_tasks(db_connection,1)
+        timetable = select_all_tasks(db_connection, 1)
         num = 0
         for row in timetable:
             y = 0
@@ -110,10 +129,10 @@ async def on_message(message):
                 await message.channel.send("Next course: " + temp_n + "\nStart: " + temp_t + "\nAttendees: " + temp_tg)
                 break
             else:
-              num = num + 1
+                num = num + 1
         if num == len(timetable):
-          await message.channel.send("There are no more classes for tomorrow. Yay~")
-        
+            await message.channel.send("There are no more classes for tomorrow. Yay~")
+
 
 @client.event
 async def reminder():
@@ -125,7 +144,7 @@ async def reminder():
         if 0 <= tempDay < 5:
             print("Monday to Friday")
             db_connection = create_connection('reminder.db')
-            timetable = select_all_tasks(db_connection,0)
+            timetable = select_all_tasks(db_connection, 0)
             for row in timetable:
                 y = 0
                 for x in row:
@@ -164,8 +183,9 @@ async def reminder():
                         break
             await asyncio.sleep(3600)
         else:
-          print("Saturday and Sunday")
-          await asyncio.sleep(3600)
+            print("Saturday and Sunday")
+            await asyncio.sleep(3600)
+
 
 client.loop.create_task(reminder())
 
