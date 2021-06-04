@@ -6,7 +6,7 @@ import asyncio
 import pytz
 import sqlite3
 from keep_alive import keep_alive
-import quote
+import extra
 
 """
 # Set Command Prefix Here
@@ -48,7 +48,16 @@ async def on_message(message):
     if message.content.startswith('$hello'):
         await message.channel.send('Hello!')
     elif message.content.startswith('$quote'):
-        await message.channel.send(quote.chooseQuote())
+        await message.channel.send(extra.chooseQuote())
+    elif message.content.startswith('$dice'):
+        await message.channel.send('Player 1: ')
+        player1 = await client.wait_for("message", check=check)
+        await message.channel.send('Player 2: ')
+        player2 = await client.wait_for("message", check=check)
+        await message.channel.send(extra.playDice(player1, player2))
+
+    elif message.content.startswith('$mudae'):
+        await message.channel.send('Mudae is noob! Dont use Mudae!')
     elif message.content.startswith('$next'):
         db_connection = create_connection('reminder.db')
         timetable = select_all_tasks(db_connection,0)

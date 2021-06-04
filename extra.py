@@ -34,3 +34,15 @@ quoteLs = ['Believe you can and you’re halfway there.',
         ]
 def chooseQuote():
   return random.choice(quoteLs)
+
+def playDice(player1, player2):
+  numLs = [1,2,3,4,5,6]
+  num1 = random.choice(numLs)
+  num2 = random.choice(numLs)
+  if num1 < num2:
+    result = player1 + " : " + num1 + "\n" + player2 + " : " + num2 + "\nWinner: " + player2
+  elif num1 > num2:
+    result = player1 + " : " + num1 + "\n" + player2 + " : " + num2 + "\nWinner: " + player1
+  else:
+    result = "It's a draw!"
+  return result
