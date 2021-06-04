@@ -39,7 +39,6 @@ def insert_reminder(db_connection):
 
 @client.event
 async def on_ready():
-    print(quote.chooseQuote())
     print('Bot is Online')
 
 @client.event
