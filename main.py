@@ -14,7 +14,7 @@ client = commands.Bot(command_prefix="$")
 """
 
 client = discord.Client()
-botToken = 'ODIzOTE1MTQzMDQ1MzE2NjI4.YFnwxQ.840BVstv5OyabfXNjiz-ybxDw5o'
+botToken = 'your_bot_token'
 
 
 def create_connection(db_file):
